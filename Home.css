@@ -52,7 +52,9 @@
   object-position: 50% 100%;
   width: 540px;
   height: 540px;
-  background-image: url("images/528719310-0.jpeg");
+  background-image: url("images/hero-circle-540.webp");
+  background-image: -webkit-image-set(url("images/hero-circle-540.webp") 1x, url("images/hero-circle-1000.webp") 2x);
+  background-image: image-set(url("images/hero-circle-540.webp") type("image/webp") 1x, url("images/hero-circle-1000.webp") type("image/webp") 2x);
   background-position: 50% 50%;
   margin: 80px auto 0 20px;
 }
@@ -243,7 +245,9 @@
 .u-section-2 .u-image-1 {
   width: 567px;
   height: 567px;
-  background-image: url("images/d79eca203f4ced63eff400ea0987271cb8c9280bdbf38f47da5b1bd1fd7a0bf510fa2862e29eabdf2f124873c6c83cae41ed3faa304451fc9ec133_1280.jpg");
+  background-image: url("images/taxi-hire-circle-567.webp");
+  background-image: -webkit-image-set(url("images/taxi-hire-circle-567.webp") 1x, url("images/taxi-hire-circle-853.webp") 2x);
+  background-image: image-set(url("images/taxi-hire-circle-567.webp") type("image/webp") 1x, url("images/taxi-hire-circle-853.webp") type("image/webp") 2x);
   background-position: 50% 50%;
   margin: 0 32px 0 auto;
 }
@@ -251,15 +255,19 @@
 .u-section-2 .u-image-2 {
   width: 405px;
   height: 405px;
-  background-image: url("images/ccc-min.jpg");
-  background-position: 50% 54.32%;
+  background-image: url("images/taxi-hire-circle-sm-405.webp");
+  background-image: -webkit-image-set(url("images/taxi-hire-circle-sm-405.webp") 1x, url("images/taxi-hire-circle-sm-810.webp") 2x);
+  background-image: image-set(url("images/taxi-hire-circle-sm-405.webp") type("image/webp") 1x, url("images/taxi-hire-circle-sm-810.webp") type("image/webp") 2x);
+  background-position: 50% 50%;
   margin: -314px auto 0 0;
 }
 
 .u-section-2 .u-image-3 {
   width: 244px;
   height: 244px;
-  background-image: url("images/33f66d3f445ab020315ae28a4e02c8595b82b1fad00c41be940ccb6f8597c7f0c2919ee1e539b1375d366905af3b7f1f70bc036c8ce7520487fe8e_1280.jpg");
+  background-image: url("images/taxi-hire-circle-xs-244.webp");
+  background-image: -webkit-image-set(url("images/taxi-hire-circle-xs-244.webp") 1x, url("images/taxi-hire-circle-xs-488.webp") 2x);
+  background-image: image-set(url("images/taxi-hire-circle-xs-244.webp") type("image/webp") 1x, url("images/taxi-hire-circle-xs-488.webp") type("image/webp") 2x);
   background-position: 50% 50%;
   margin: -88px 190px 0 auto;
 }
@@ -803,7 +811,9 @@
 .u-section-4 .u-image-1 {
   width: 510px;
   height: 510px;
-  background-image: url("images/-min.jpg");
+  background-image: url("images/about-circle-510.webp");
+  background-image: -webkit-image-set(url("images/about-circle-510.webp") 1x, url("images/about-circle-1020.webp") 2x);
+  background-image: image-set(url("images/about-circle-510.webp") type("image/webp") 1x, url("images/about-circle-1020.webp") type("image/webp") 2x);
   background-position: 50% 50%;
   margin: -128px 0 0 auto;
 }
@@ -812,7 +822,9 @@
   width: 279px;
   height: 279px;
   box-shadow: 5px 5px 18px 1px rgba(0,0,0,0.4);
-  background-image: url("images/36bdd830d337d4cb1d049bf299df369fab70d81ed9086e3e55e4e7004fc3079b808d9083e3f9e3acd59f6fd5f33ef0001f44fc3e52b22bf7bdf562_1280.jpg");
+  background-image: url("images/about-circle-sm-279.webp");
+  background-image: -webkit-image-set(url("images/about-circle-sm-279.webp") 1x, url("images/about-circle-sm-558.webp") 2x);
+  background-image: image-set(url("images/about-circle-sm-279.webp") type("image/webp") 1x, url("images/about-circle-sm-558.webp") type("image/webp") 2x);
   background-position: 50% 50%;
   margin: -139px auto 0 0;
 }
