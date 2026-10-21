@@ -526,6 +526,8 @@
   }
 }.u-section-3 {
   background-image: none;
+  /* the decorative blob is wider than a phone screen */
+  overflow-x: clip;
 }
 
 .u-section-3 .u-sheet-1 {
