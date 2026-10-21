@@ -67,6 +67,11 @@ img { display: block; max-width: 100%; height: auto; }
     border-radius: 4px;
 }
 
+.hero :focus-visible,
+.call-bar:focus-visible { outline-color: #fff; }
+
+.call-bar:focus-visible { outline-offset: -6px; }
+
 .sprite { position: absolute; }
 
 .icon {
@@ -119,8 +124,6 @@ img { display: block; max-width: 100%; height: auto; }
 .btn-ghost { color: #fff; border-color: rgb(255 255 255 / 0.55); }
 .btn-ghost:hover { border-color: #fff; background: rgb(255 255 255 / 0.1); }
 
-.btn-dark { background: var(--ink); color: #fff; }
-.btn-dark:hover { background: var(--green-deep); }
 
 /* Header ----------------------------------------------------------------- */
 
@@ -320,9 +323,9 @@ img { display: block; max-width: 100%; height: auto; }
     position: absolute;
     left: 50%;
     top: 50%;
-    width: min(1000px, 140vw);
-    aspect-ratio: 1.1;
-    translate: -50% -42%;
+    width: min(940px, 82vw);
+    aspect-ratio: 1.8;
+    translate: -50% -50%;
     background: var(--green);
     border-radius: 47% 53% 42% 58% / 52% 38% 62% 48%;
 }
@@ -506,6 +509,8 @@ a.contact-line:hover { color: var(--green-dark); }
     .step-list { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; }
 
     .about-art { justify-self: center; }
+
+    .steps::before { display: none; }
 }
 
 @media (max-width: 560px) {
@@ -517,7 +522,7 @@ a.contact-line:hover { color: var(--green-dark); }
 
     .hero-actions .btn { flex: 1 1 100%; }
 
-    body { padding-bottom: 64px; }
+    .site-footer { padding-bottom: calc(2rem + 64px + env(safe-area-inset-bottom)); }
 
     .call-bar {
         position: fixed;
@@ -527,7 +532,7 @@ a.contact-line:hover { color: var(--green-dark); }
         align-items: center;
         justify-content: center;
         gap: 0.6rem;
-        height: 64px;
+        height: calc(64px + env(safe-area-inset-bottom));
         padding-bottom: env(safe-area-inset-bottom);
         background: var(--red);
         color: #fff;
