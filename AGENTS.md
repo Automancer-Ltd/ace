@@ -27,6 +27,6 @@ Merging to `main` is the release: Pages builds and serves it. Verify with `scrip
 
 ## Observability
 
-- Uptime: `obs uptime | grep acecredit` (UptimeRobot monitor on `/revision.json`, 5 minutes). `obs` does not know this site as an app yet.
+- Uptime: `obs uptime ace` (UptimeRobot monitor on `/revision.json`).
 - Errors: none. The page runs no application code of its own, so there is nothing to report.
 - Served version: `curl -fsS https://acecredit.co.uk/revision.json`.
