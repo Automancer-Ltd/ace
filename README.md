@@ -1,1 +1,1 @@
-Last verified: 2026-09-26 on automancer-vps
+Ace Credit's one-page site, served by GitHub Pages. Start at [AGENTS.md](AGENTS.md).
