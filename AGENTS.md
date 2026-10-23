@@ -5,9 +5,7 @@ GitHub Pages straight from `main`. No build step, no framework, no backend, no f
 
 ## Where things live
 
-- `index.html`: the whole page. `Home.css`: its styles. `images/`: WebP, sized per breakpoint.
-- `nicepage.css`, `nicepage.js`, `jquery.js`: vendored output of the Nicepage editor. Leave them alone; the
-  design pass (draft PR #8) replaces them.
+- `index.html`: the whole page. `styles.css`: its styles. `images/`: WebP, sized per breakpoint.
 - `revision.json`: Jekyll writes the served commit into it (`{"revision": "<sha>"}`). `deploy.json` tells
   Guardian's served-vs-main check to read it.
 - `_config.yml` keeps `AGENTS.md`, `README.md` and `scripts/` off the public site.
