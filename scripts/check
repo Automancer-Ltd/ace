@@ -12,5 +12,4 @@ cp "$here/axe.mjs" "$tmp/"
 cd "$tmp"
 npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.64.1 @axe-core/playwright@4.14.0
 npx playwright install ${CI:+--with-deps} chromium
-# Contrast fails today; drop the default when the design pass (PR #8) lands.
-A11Y_DISABLE_RULES=${A11Y_DISABLE_RULES-color-contrast} node axe.mjs "$target"
+A11Y_DISABLE_RULES=${A11Y_DISABLE_RULES-} node axe.mjs "$target"
