@@ -23,6 +23,26 @@ GitHub Pages straight from `main`. No build step, no framework, no backend, no f
 Merging to `main` is the release: Pages builds and serves it. Verify with `scripts/verify-live`; the step is
 `.agents/skills/verify-ace/SKILL.md`.
 
+### Roll back a failed live release
+
+GitHub Pages serves `main`, so rollback is a **forward-fix release**, not a manual Pages edit or a reset of
+`main`:
+
+1. Read the live revision with `curl -fsS https://acecredit.co.uk/revision.json` and compare it with
+   `git log --oneline origin/main`. Confirm which release introduced the failure; preserve any later, unrelated
+   changes.
+2. Start a branch from the current `origin/main`. Revert the faulty commit(s): use
+   `git revert <commit>` for a normal commit, or `git revert -m 1 <merge-commit>` to revert a merge while keeping
+   its first-parent `main` line. Resolve conflicts carefully; do not force-push or reset `main`.
+3. Run `scripts/check`, push the branch, and open a PR. Merge only after the required checks pass. The merge is the
+   rollback release; Pages rebuilds from the resulting `main` commit.
+4. Run `scripts/verify-live` and confirm `/revision.json` reports the rollback merge SHA and the production checks
+   pass. Keep the incident open until this verification succeeds. If the revert conflicts or the rollback release
+   fails verification, stop and prepare a corrected forward fix; do not claim service restored.
+
+Record the faulty and rollback SHAs, PR, and live verification result in the incident/task. Never roll back by
+force-moving `main` or by editing the published site directly.
+
 ## Observability
 
 - Uptime: `obs uptime ace` (UptimeRobot monitor on `/revision.json`).
