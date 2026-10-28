@@ -13,7 +13,7 @@ GitHub Pages straight from `main`. No build step, no framework, no backend, no f
 ## Commands
 
 - `scripts/check` is the one check and what CI runs: it serves the checkout and fails on WCAG 2.2 A/AA
-  violations (axe-core) at 1280 px and 320 px. Heavy (it downloads Chromium): `/opt/automancer/bin/heavy -- scripts/check`.
+  violations (axe-core) at 1280 px and 320 px, then runs `scripts/journey.mjs`: a read-only visitor journey (dialable phone links that agree across header/hero/contact/JSON-LD, nav targets, images decode, no sideways scroll, phone call bar, no script errors) with screenshots written to `$JOURNEY_SHOTS` (default `journey-shots/`, git-ignored). Heavy (it downloads Chromium): `/opt/automancer/bin/heavy -- scripts/check`.
 - `scripts/verify-live` runs after a merge: waits for Pages to serve the merged SHA, then runs the same check
   against production. Merge-to-live is about a minute.
 - `git config core.hooksPath .githooks` turns on the secret-scan hooks in a fresh clone.
