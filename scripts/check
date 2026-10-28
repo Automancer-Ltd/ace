@@ -8,8 +8,9 @@ target=${1:-$here/..}
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 # The checker installs outside the checkout, so no node_modules ever reaches the published site.
-cp "$here/axe.mjs" "$tmp/"
+cp "$here/axe.mjs" "$here/journey.mjs" "$tmp/"
 cd "$tmp"
 npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.64.1 @axe-core/playwright@4.14.0
 npx playwright install ${CI:+--with-deps} chromium
 A11Y_DISABLE_RULES=${A11Y_DISABLE_RULES-} node axe.mjs "$target"
+node journey.mjs "$target" "${JOURNEY_SHOTS:-$here/../journey-shots}"

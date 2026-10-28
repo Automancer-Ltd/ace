@@ -16,3 +16,5 @@ opens it in Chromium at 1280 px and 320 px and fails on any WCAG 2.2 A/AA violat
 
 Red proof (21 Oct 2026, repeat after changing `scripts/axe.mjs`): remove an `alt` from an `<img>` in a copy
 of the site and run `scripts/check <copy>`; it must exit 1 with `image-alt`.
+
+The same command also runs `scripts/journey.mjs` (read-only; no forms, no writes) and saves desktop and phone screenshots to `$JOURNEY_SHOTS`. Red proof: break one `tel:` href in a copy; it must exit 1 with `header/hero/contact main numbers differ`. There is no staging site, so pre-merge runs on the checkout and post-merge on production read-only.
