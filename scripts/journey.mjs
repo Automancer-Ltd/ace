@@ -28,7 +28,7 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); };
 const browser = await chromium.launch();
 
 for (const [name, viewport, phone] of [["desktop", { width: 1280, height: 900 }, false], ["phone", { width: 360, height: 740 }, true]]) {
-  const ctx = await browser.newContext({ viewport, reducedMotion: "reduce", hasTouch: phone, isMobile: phone });
+  const ctx = await browser.newContext({ viewport, reducedMotion: "reduce", hasTouch: phone, isMobile: phone, deviceScaleFactor: phone ? 2 : 1 });
   const page = await ctx.newPage();
   const bad = [];
   const ours = (u) => u.startsWith(new URL(url).origin);
@@ -70,8 +70,14 @@ for (const [name, viewport, phone] of [["desktop", { width: 1280, height: 900 },
   // 3. Images the visitor sees actually decoded (a broken image is a blank hole).
   const broken = await page.locator("img").evaluateAll((is) => is.filter((i) => !(i.complete && i.naturalWidth > 0)).map((i) => i.getAttribute("src")));
   check(broken.length === 0, `${name}: broken images ${broken.join(", ")}`);
-  const noBg = await page.locator(".photo").evaluateAll((ps) => ps.filter((p) => getComputedStyle(p).backgroundImage === "none").length);
-  check(noBg === 0, `${name}: ${noBg} photo blocks have no background image`);
+  check(await page.locator("img.photo").count() >= 6, `${name}: photos missing`);
+  // A phone fetches each photo at roughly the size its screen shows, not a file sized for a laptop.
+  if (phone) {
+    const oversized = await page.locator("img.photo").evaluateAll((is) => is
+      .filter((i) => i.naturalWidth > 1.5 * i.getBoundingClientRect().width * devicePixelRatio)
+      .map((i) => `${i.currentSrc.split("/").pop()} for ${Math.round(i.getBoundingClientRect().width)}px`));
+    check(oversized.length === 0, `phone: photos larger than the screen needs: ${oversized.join(", ")}`);
+  }
   // 4. Phone: nothing forces sideways scrolling, and the sticky call bar is there and not covering the footer text.
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   check(overflow <= 0, `${name}: page scrolls sideways by ${overflow}px`);
