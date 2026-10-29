@@ -18,24 +18,26 @@ const server = createServer(async (req, res) => {
     const body = await readFile(path.join(root, path.normalize(p)));
     res.writeHead(200, { "content-type": types[path.extname(p)] ?? "application/octet-stream" }).end(body);
   } catch {
-    res.writeHead(404).end();
+    // GitHub Pages answers any missing path with 404.html and a 404 status.
+    const page = await readFile(path.join(root, "404.html")).catch(() => "");
+    res.writeHead(404, { "content-type": "text/html" }).end(page);
   }
 });
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const url = live ? target : `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch();
 let failed = 0;
-for (const viewport of [{ width: 1280, height: 900 }, { width: 320, height: 640 }]) {
+for (const [label, pageUrl] of [["home", url], ["not found", new URL("no-such-page/old-link", url).href]]) for (const viewport of [{ width: 1280, height: 900 }, { width: 320, height: 640 }]) {
   // Reduced motion shows scroll-reveal content at once, so axe checks it.
   const page = await (await browser.newContext({ viewport, reducedMotion: "reduce" })).newPage();
-  await page.goto(url, { waitUntil: "networkidle" });
+  await page.goto(pageUrl, { waitUntil: "networkidle" });
   const { violations } = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
     .disableRules(disabled)
     .analyze();
   for (const v of violations) {
     failed++;
-    console.log(`${viewport.width}px ${v.id} (${v.impact}): ${v.help}\n  ${v.nodes.map((n) => n.target.join(" ")).join("\n  ")}`);
+    console.log(`${label} ${viewport.width}px ${v.id} (${v.impact}): ${v.help}\n  ${v.nodes.map((n) => n.target.join(" ")).join("\n  ")}`);
   }
 }
 await browser.close();

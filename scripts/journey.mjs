@@ -17,7 +17,11 @@ const server = createServer(async (req, res) => {
   try {
     const body = await readFile(path.join(root, path.normalize(p)));
     res.writeHead(200, { "content-type": types[path.extname(p)] ?? "application/octet-stream" }).end(body);
-  } catch { res.writeHead(404).end(); }
+  } catch {
+    // GitHub Pages answers any missing path with 404.html and a 404 status.
+    const page = await readFile(path.join(root, "404.html")).catch(() => "");
+    res.writeHead(404, { "content-type": "text/html" }).end(page);
+  }
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const url = live ? target : `http://127.0.0.1:${server.address().port}/`;
@@ -112,6 +116,32 @@ for (const [name, viewport, phone] of [["desktop", { width: 1280, height: 900 },
     const size = (await stat(file)).size;
     check(size > 20000, `${name} ${label} screenshot looks blank (${size} bytes)`);
   }
+
+  // 6. A stale or mistyped link still reaches the business: the not-found page keeps the brand, the call
+  // button and a way home, from any folder depth, instead of GitHub's generic error page.
+  bad.length = 0;
+  elsewhere.length = 0;
+  const missing = new URL("no-such-page/old-link", url).href;
+  const nf = await page.goto(missing, { waitUntil: "networkidle" });
+  check(nf?.status() === 404, `${name} not found: status ${nf?.status()}, want 404`);
+  check(await page.locator("h1").count() === 1, `${name} not found: expected exactly one h1`);
+  const nfTels = await page.locator("main a[href^=\"tel:\"]").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+  check(nfTels.includes(headerTel), `${name} not found: no call button for ${headerTel} (${nfTels.join(", ")})`);
+  check(await page.locator("main a[href=\"/\"]").count() === 1, `${name} not found: no link to the home page`);
+  const nfBroken = await page.locator("img").evaluateAll((is) => is.filter((i) => !(i.complete && i.naturalWidth > 0)).map((i) => i.getAttribute("src")));
+  check(nfBroken.length === 0, `${name} not found: broken images ${nfBroken.join(", ")}`);
+  check(await page.evaluate(() => { const h = document.querySelector(".site-header"); return h && getComputedStyle(h).position; }) === "sticky", `${name} not found: site styles did not load`);
+  const nfOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  check(nfOverflow <= 0, `${name} not found: page scrolls sideways by ${nfOverflow}px`);
+  if (phone) check(await bar.isVisible(), "phone not found: call bar not visible");
+  const nfBad = bad.filter((b) => b !== `404 ${missing}`);
+  check(nfBad.length === 0, `${name} not found: load problems: ${nfBad.join("; ")}`);
+  check(elsewhere.length === 0, `${name} not found: requests to other sites: ${elsewhere.join(", ")}`);
+  const nfFaces = await page.evaluate(() => [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/["']/g, "")));
+  check(nfFaces.includes("Oswald"), `${name} not found: Oswald font did not load`);
+  const nfFile = path.join(shotDir, `ace-${name}-not-found.png`);
+  await page.screenshot({ path: nfFile, fullPage: true });
+  check((await stat(nfFile)).size > 20000, `${name} not found screenshot looks blank`);
   await ctx.close();
 }
 await browser.close();
