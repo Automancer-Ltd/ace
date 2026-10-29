@@ -10,7 +10,7 @@ const target = process.argv[2];
 const shotDir = path.resolve(process.argv[3] ?? "journey-shots");
 const live = /^https?:\/\//.test(target);
 const root = live ? "" : path.resolve(target);
-const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".ico": "image/x-icon", ".json": "application/json" };
+const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".ico": "image/x-icon", ".json": "application/json", ".woff2": "font/woff2" };
 const server = createServer(async (req, res) => {
   let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
   if (p.endsWith("/")) p += "index.html";
@@ -35,6 +35,8 @@ for (const [name, viewport, phone] of [["desktop", { width: 1280, height: 900 },
   page.on("pageerror", (e) => bad.push(`script error: ${e.message}`));
   page.on("response", (r) => { if (ours(r.url()) && r.status() >= 400) bad.push(`${r.status()} ${r.url()}`); });
   page.on("requestfailed", (r) => { if (ours(r.url())) bad.push(`failed ${r.url()}`); });
+  const elsewhere = [];
+  page.on("request", (r) => { if (/^https?:/.test(r.url()) && !ours(r.url())) elsewhere.push(r.url()); });
   const resp = await page.goto(url, { waitUntil: "networkidle" });
   check(resp?.status() === 200, `${name}: page status ${resp?.status()}`);
   check(await page.locator("h1").count() === 1, `${name}: expected exactly one h1`);
@@ -90,11 +92,12 @@ for (const [name, viewport, phone] of [["desktop", { width: 1280, height: 900 },
   }
   // 5. Footer carries the legal line and the page ends on it.
   check((await page.locator("footer").innerText()).includes("Company No."), `${name}: footer lost the company line`);
-  // Missing font files only change the typeface (the page falls back), so they warn; anything else fails.
-  const isFont = (m) => /\.woff2?\b/.test(m);
-  for (const m of bad.filter(isFont)) console.log(`WARN ${name}: ${m}`);
-  const hard = bad.filter((m) => !isFont(m));
-  check(hard.length === 0, `${name}: load problems: ${hard.join("; ")}`);
+  // Everything the page needs, fonts included, is served from the site itself: a missing file fails,
+  // and no visitor's address is handed to another company just for loading the page.
+  check(bad.length === 0, `${name}: load problems: ${bad.join("; ")}`);
+  check(elsewhere.length === 0, `${name}: requests to other sites: ${elsewhere.join(", ")}`);
+  const faces = await page.evaluate(() => [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/["']/g, "")));
+  for (const family of ["Oswald", "Open Sans"]) check(faces.includes(family), `${name}: ${family} font did not load`);
 
   // Screenshots: full page and the first screen. They are CI artifacts; a blank or tiny capture fails the check.
   for (const [label, opts] of [["full", { fullPage: true }], ["first-screen", {}]]) {
