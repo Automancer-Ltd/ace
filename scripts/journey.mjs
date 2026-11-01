@@ -59,6 +59,12 @@ for (const [name, viewport, phone] of [["desktop", { width: 1280, height: 900 },
   // Structured data must agree with the page, or search results show a wrong number.
   const ld = JSON.parse(await page.locator("script[type=\"application/ld+json\"]").first().textContent());
   check(tels.includes(`tel:${ld.telephone}`), `${name}: JSON-LD telephone ${ld.telephone} is not a phone link on the page`);
+  const ldTels = new Set([ld.telephone, ...(ld.contactPoint ?? []).map((c) => c.telephone)].map((t) => `tel:${t}`));
+  const pageTels = new Set(tels);
+  const onlyPage = [...pageTels].filter((t) => !ldTels.has(t));
+  const onlyLd = [...ldTels].filter((t) => !pageTels.has(t));
+  check(onlyPage.length === 0 && onlyLd.length === 0, `${name}: JSON-LD and page phone numbers differ (page only: ${onlyPage.join(", ") || "none"}; JSON-LD only: ${onlyLd.join(", ") || "none"})`);
+  check(typeof ld.geo?.latitude === "number" && typeof ld.geo?.longitude === "number", `${name}: JSON-LD has no map position (geo)`);
   const mails = await page.locator("a[href^=\"mailto:\"]").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
   check(mails.length >= 1 && mails.every((m) => m === `mailto:${ld.email}`), `${name}: mailto links differ from JSON-LD email`);
 
