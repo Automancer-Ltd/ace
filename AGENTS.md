@@ -5,7 +5,8 @@ GitHub Pages straight from `main`. No build step, no framework, no backend, no f
 
 ## Where things live
 
-- `index.html`: the whole page. `styles.css`: its styles. `images/`: WebP, sized per breakpoint.
+- `index.html`: the whole page. `404.html`: what GitHub Pages shows for any missing path (brand, call button,
+  link home; root-absolute asset paths so it works at any folder depth). `styles.css`: styles for both. `images/`: WebP, sized per breakpoint.
 - `fonts/`: self-hosted Oswald and Open Sans (Latin, variable weight) with their licence. The page loads
   nothing from other sites.
 - `revision.json`: Jekyll writes the served commit into it (`{"revision": "<sha>"}`). `deploy.json` tells
@@ -15,7 +16,7 @@ GitHub Pages straight from `main`. No build step, no framework, no backend, no f
 ## Commands
 
 - `scripts/check` is the one check and what CI runs: it serves the checkout and fails on WCAG 2.2 A/AA
-  violations (axe-core) at 1280 px and 320 px, then runs `scripts/journey.mjs`: a read-only visitor journey (dialable phone links that agree across header/hero/contact/JSON-LD, nav targets, images and fonts load, nothing loads from other sites, no sideways scroll, phone call bar, no script errors) with screenshots written to `$JOURNEY_SHOTS` (default `journey-shots/`, git-ignored). Heavy (it downloads Chromium): `/opt/automancer/bin/heavy -- scripts/check`.
+  violations (axe-core) at 1280 px and 320 px, also on the not-found page, then runs `scripts/journey.mjs`: a read-only visitor journey (dialable phone links that agree across header/hero/contact/JSON-LD, nav targets, images and fonts load, nothing loads from other sites, no sideways scroll, phone call bar, no script errors, and a missing path shows the branded not-found page with the call button) with screenshots written to `$JOURNEY_SHOTS` (default `journey-shots/`, git-ignored). Heavy (it downloads Chromium): `/opt/automancer/bin/heavy -- scripts/check`.
 - `scripts/verify-live` runs after a merge: waits for Pages to serve the merged SHA, then runs the same check
   against production. Merge-to-live is about a minute.
 - `git config core.hooksPath .githooks` turns on the secret-scan hooks in a fresh clone.
